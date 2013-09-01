@@ -1617,7 +1617,7 @@ var coreTests = [
     tests: [
       {
         name: "simple raw text",
-        source: ["{`",
+        source: ["{`<pre>",
                  'A: "hello"',
                  "              B: 'hello'?",
                  "A: a walrus (:{=",
@@ -1634,9 +1634,9 @@ var coreTests = [
 "    (          '  |'        ( __= ___..-._ ( (.\\  ",
 "   ('\      .___ ___.      /'.___=          \.\.\  ",
 "    \\\-..____________..-''                        ",
-                 "`}"].join('\n'),
+                 "</pre>`}"].join('\n'),
         context: {},
-        expected: ["",
+        expected: ["<pre>",
                  'A: "hello"',
                  "              B: 'hello'?",
                  "A: a walrus (:{=",
@@ -1653,14 +1653,14 @@ var coreTests = [
 "    (          '  |'        ( __= ___..-._ ( (.\\  ",
 "   ('\      .___ ___.      /'.___=          \.\.\  ",
 "    \\\-..____________..-''                        ",
-                 ""].join('\n'),
+                 "</pre>"].join('\n'),
         message: "raw text should keep all whitespace"
       },
       {
         name: "raw text more likely example",
         source: ["{#A}",
                  "buffer text",
-                 "         !spaces and new lines are ignored (by default). Booo",
+                 "         !spaces and new lines are nullified (by default). Booo",
                  "{~n}   Starting with newline make it not so bad",
                  "{`<pre>",
                  "but",
@@ -1675,7 +1675,7 @@ var coreTests = [
                  "!newline",
                  "{/A}"].join('\n'),
         context: {A:{ name: {first: 'Paul', last: 'Walrus'}}},
-        expected: ["buffer text!spaces and new lines are ignored (by default). Booo",
+        expected: ["buffer text!spaces and new lines are nullified (by default). Booo",
                  "   Starting with newline make it not so bad<pre>",
                  "but",
                  "  what{",
@@ -1686,6 +1686,14 @@ var coreTests = [
                  " * interpolations like 'My name is: Paul Walrus",
                  "</pre>after!newline"].join('\n'),
         message: "raw text is not matching"
+      },
+      {
+        name: "using raw to allow {",
+        source: ["<div data-fancy-json={`\"{rawJsonKey: 'value'}\"`}>",
+                 "</div>"].join('\n'),
+        context: {},
+        expected: "<div data-fancy-json=\"{rawJsonKey: 'value'}\"></div>",
+        message: "raw text should allow {"
       }
     ]
   },
